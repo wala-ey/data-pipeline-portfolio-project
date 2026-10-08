@@ -39,8 +39,6 @@ class Transform:
             raise e
         
         return self
-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
-
 
     def coerce_student_data_types(self):
         """Coerce datatypes"""
