@@ -181,3 +181,31 @@ class Transform:
         self.logger.info("Transformation complete")
 
         return self.staged_tables
+
+if __name__ == "__main__":
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s , %(message)s, %(lineno)d]")
+    #quick test run
+    raw_tables = {
+        "cademycode_students": pd.DataFrame({
+            "uuid": [1],
+            "name": ["John Doe"], 
+            "dob":["2000-05-15"],
+            "sex": ["M"],
+            "contact_info": ['{"mailing_address": "123 somestreet, Anywhere, Earth", "email": "john.doe@example.com"}'],
+            "job_id": ["4"],
+            "num_course_taken": ["6"],
+            "current_career_path_id": ["3"],
+            "time_spent_hrs": ["200"]
+            }),
+        "cademycode_courses": pd.DataFrame({
+            "id": [1, 2, 3, 3, 4],
+            "course_name": ["a", "b", "c", "c", "d"]
+        }),
+        "cademycode_student_jobs": pd.DataFrame({
+            "id": [1, 1, 3, 3, 4],
+            "job_name": ["a", "a", "c", "c", "d"]
+        })
+    }
+    processed_tables = Transform(raw_tables).run_transform()
+    print(processed_tables)

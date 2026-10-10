@@ -24,5 +24,5 @@ class ETLPipeline:
         
 if __name__ == "__main__":
    root_logger.setup_logger()
-   pipeline =  ETLPipeline("/home/wala-elsadig/Projects/subscriber-pipeline-starter-kit/dev/data/raw/cademycode.db", "/home/wala-elsadig/Projects/subscriber-pipeline-starter-kit/dev/data/processed/analytics_cademycode.db", "/home/wala-elsadig/Projects/subscriber-pipeline-starter-kit/dev/data/processed/analytics_cademycode.csv")
+   pipeline =  ETLPipeline("data/raw/cademycode.db", "data/processed/analysis_cademycode.db", "data/processed/csv_for_analysis_cademycode.csv")
    pipeline.orchestrate()

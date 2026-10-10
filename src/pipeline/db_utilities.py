@@ -1,16 +1,15 @@
 import sqlite3 
 import logging
-import logging
-
+from pathlib import Path
 
 
 
 class SQLite3DatabaseConnection():
     """Context manager:
-        Establishes a connection with the database, commits actions and closes the database
+        Establishes a SQLite3 connection with the database, commits actions and closes the database.
     """
     def __init__(self, database):
-        self.database = database
+        self.database = Path(database).resolve()
         self.connection: sqlite3.connection | None = None
         self.logger = logging.getLogger(__name__)
 
@@ -18,7 +17,10 @@ class SQLite3DatabaseConnection():
         self.logger.info("Connecting to database '%s'...", self.database)
         try:
             self.connection = sqlite3.connect(self.database)
-            self.logger.info("Successfully connected to database '%s'", self.database)
+            if self.database.exists():
+                self.logger.info("Successfully connected to existing database '%s'", self.database)
+            else:
+                self.logger.info("Successfully connected to new database '%s'", self.database)
         except sqlite3.Error as e:
             self.logger.critical("Failed to connect to database '%s' : %s", self.database,e)
             raise e
@@ -65,4 +67,14 @@ class SQLite3DatabaseConnection():
                 raise e
             
         return False
+
+if __name__ == "__main__":
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(level=logging.DEBUG)
+    with SQLite3DatabaseConnection("data/raw/cademycode.db") as conn:
+        cur = conn.cursor()
+        cur.execute("PRAGMA table_info(cademycode_students);")
+        print([row[1] for row in cur.fetchall()])
+
+
 

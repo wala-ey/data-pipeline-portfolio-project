@@ -5,7 +5,8 @@ import pandas as pd
 
 
 class Extract:
-    """Extract data from tables in the source database into DataFrames
+    """Takes the argument of a source database path and extracts the data from the
+        tables in the source database into DataFrames
     """
 
     def __init__(self, source_db:str):
@@ -58,3 +59,11 @@ class Extract:
         self.logger.info("Extraction Complete")
 
         return self.raw_tables
+
+if __name__ == "__main__":
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(level=logging.DEBUG)
+    #quick test_run
+    raw_tables = Extract("data/raw/cademycode.db").run_extraction()
+    print(raw_tables)
+    
