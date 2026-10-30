@@ -24,5 +24,7 @@ class ETLPipeline:
         
 if __name__ == "__main__":
    root_logger.setup_logger()
+   logger = logging.getLogger
+   logging.basicConfig(level=logging.DEBUG)
    pipeline =  ETLPipeline("data/raw/cademycode.db", "data/processed/analysis_cademycode.db", "data/processed/csv_for_analysis_cademycode.csv")
    pipeline.orchestrate()

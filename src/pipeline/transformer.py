@@ -7,6 +7,7 @@ class Transform:
     def __init__(self, raw_tables: dict):
         self.raw_tables = raw_tables
         self.staged_tables: dict[str, pd.DataFrame] = {}
+        self.cademycode_students: pd.DataFrame | None = None
         self.logger = logging.getLogger(__name__)
 
     def isolate_tables(self):
@@ -27,7 +28,7 @@ class Transform:
         self.logger.debug("Transforming string hours to integer minutes")
         try:
             #time_spend_hrs to to minutes and save as integer to improve clarity and reduce RAM usage
-            self.cademycode_students["time_spent_mins"] = (pd.to_numeric(self.cademycode_students["time_spent_hrs"], dtype_backend='pyarrow') * 60).round().astype('Int64')
+            self.cademycode_students["time_spent_mins"] = (pd.to_numeric(self.cademycode_students["time_spent_hrs"]) * 60).round().astype('Int64')
             self.logger.debug("Successfully converted 'time_spent_hrs' string values to integer minutes in 'time_spent_mins'")
             try:          
                 del self.cademycode_students["time_spent_hrs"]
@@ -50,7 +51,7 @@ class Transform:
 
         try:
             for col in ["job_id", "num_course_taken", "current_career_path_id"]:
-                self.cademycode_students[col] = pd.to_numeric(self.cademycode_students[col], errors="coerce", dtype_backend="pyarrow")
+                self.cademycode_students[col] = pd.to_numeric(self.cademycode_students[col], errors="coerce")
             self.logger.debug("Datatypes of job_id, num_course_taken, current_career_path_id columns set to integers")
         except Exception as e:
             self.logger.error("Failed to change datatype for the columns :\n%s \n    %s", ["job_id", "num_course_taken", "current_career_path_id"], e)

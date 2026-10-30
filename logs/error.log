@@ -1,0 +1,28 @@
+[2026-10-09 09:47:07,461] [CRITICAL] [db_utilities:23] - Failed to connect to database '/home/wala-elsadig/Projects/subscriber-pipeline-starter-kit/dev/data/raw/cademycode.db' : unable to open database file
+[2026-10-09 09:47:07,461] [CRITICAL] [extractor:35] - Failed to extract table names from database '/home/wala-elsadig/Projects/subscriber-pipeline-starter-kit/dev/data/raw/cademycode.db':
+    unable to open database file
+[2026-10-09 09:47:07,461] [CRITICAL] [orchestrator:23] - Failed to run ETL Pipeline:
+    unable to open database file
+[2026-10-09 10:15:26,211] [ERROR] [transformer:38] - Failed to convert 'time_spent_hrs' string values to integer minutes in 'time_spent_mins':
+    'Transform' object has no attribute 'cademycode_students'
+[2026-10-09 10:15:26,211] [CRITICAL] [orchestrator:23] - Failed to run ETL Pipeline:
+    'Transform' object has no attribute 'cademycode_students'
+[2026-10-09 10:19:40,256] [ERROR] [transformer:38] - Failed to convert 'time_spent_hrs' string values to integer minutes in 'time_spent_mins':
+    'Transform' object has no attribute 'cademycode_students'
+[2026-10-09 10:19:40,256] [CRITICAL] [orchestrator:24] - Failed to run ETL Pipeline:
+    'Transform' object has no attribute 'cademycode_students'
+[2026-10-09 10:39:13,530] [ERROR] [transformer:38] - Failed to convert 'time_spent_hrs' string values to integer minutes in 'time_spent_mins':
+    'Transform' object has no attribute 'cademycode_students'
+[2026-10-09 10:39:13,530] [CRITICAL] [orchestrator:23] - Failed to run ETL Pipeline:
+    'Transform' object has no attribute 'cademycode_students'
+[2026-10-29 15:11:55,469] [ERROR] [transformer:39] - Failed to convert 'time_spent_hrs' string values to integer minutes in 'time_spent_mins':
+    No module named 'pyarrow'
+[2026-10-29 15:11:55,498] [CRITICAL] [orchestrator:23] - Failed to run ETL Pipeline:
+    No module named 'pyarrow'
+[2026-10-29 15:15:14,360] [ERROR] [transformer:39] - Failed to convert 'time_spent_hrs' string values to integer minutes in 'time_spent_mins':
+    No module named 'pyarrow'
+[2026-10-29 15:15:14,361] [CRITICAL] [orchestrator:23] - Failed to run ETL Pipeline:
+    No module named 'pyarrow'
+[2026-10-29 15:33:44,563] [ERROR] [transformer:57] - Failed to change datatype for the columns :
+['job_id', 'num_course_taken', 'current_career_path_id'] 
+    No module named 'pyarrow'

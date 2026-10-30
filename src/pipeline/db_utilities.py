@@ -10,7 +10,7 @@ class SQLite3DatabaseConnection():
     """
     def __init__(self, database):
         self.database = Path(database).resolve()
-        self.connection: sqlite3.connection | None = None
+        self.connection: sqlite3.Connection | None = None
         self.logger = logging.getLogger(__name__)
 
     def __enter__(self):
@@ -48,7 +48,6 @@ class SQLite3DatabaseConnection():
                     self.connection.commit()
                     self.logger.info("Transaction successfully committed to '%s'", self.database)
                 except sqlite3.Error as e:
-                    self.connection.rollback()
                     self.logger.critical("Failed to commit transaction to '%s': %s", self.database,e)
                     # attempt safety rollback if commit fails
                     try: 
@@ -57,6 +56,8 @@ class SQLite3DatabaseConnection():
                     except sqlite3.Error as e:
                         self.logger.critical("Rollback also FAILED! %s", e)
                         raise e
+
+                    raise e
                 
             self.logger.debug("Closing connection to '%s'...", self.database)            
             try:
