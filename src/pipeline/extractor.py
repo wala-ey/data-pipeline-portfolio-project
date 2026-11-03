@@ -36,7 +36,7 @@ class Extract:
             return self
         except Exception as e:
             self.logger.critical("Failed to extract table names from database '%s':\n    %s", self.source_db, e)
-            raise e
+            raise
         
     def return_raw_tables(self) -> dict[str, pd.DataFrame]:
         """Extract data from databse tables"""
@@ -50,7 +50,7 @@ class Extract:
             return self
         except Exception as e:
             self.logger.critical("Failed to extract data from tables in source database '%s':\n    %s", self.source_db, e)
-            raise e
+            raise
         
     
     def run_extraction(self) -> dict[str, pd.DataFrame]:

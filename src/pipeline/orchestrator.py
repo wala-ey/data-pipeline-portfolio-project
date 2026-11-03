@@ -16,7 +16,7 @@ class ETLPipeline:
         self.logger.info("Starting ETL Pipeline Execution...")
         try: 
             raw_tables = Extract(self.source_db).run_extraction()
-            staged_tables = Transform(raw_tables).run_transform()
+            staged_tables = Transform(raw_tables).run_transformation()
             Load(staged_tables, self.target_db, self.csv_file_path).run_load()
             self.logger.info("Successfully executed ETL Pipeline")
         except Exception as e:

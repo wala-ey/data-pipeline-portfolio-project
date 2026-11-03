@@ -19,16 +19,16 @@ class Transform:
             self.logger.debug("Successfully isolated tabbles and dataframes")
         except Exception as e:
             self.logger.critical("Failed to isolate tables dataframes from raw_tables '%s':\n    %s", self.raw_tables.keys(), e)
-            raise e
+            raise
         return self
 
-    def transform_student_time_spent(self):
+    def calculate_time_spent(self):
         """Converts string 'time_spent_hrs' to 'time_spent_mins' integer (Int64)
         """
         self.logger.debug("Transforming string hours to integer minutes")
         try:
             #time_spend_hrs to to minutes and save as integer to improve clarity and reduce RAM usage
-            self.cademycode_students["time_spent_mins"] = (pd.to_numeric(self.cademycode_students["time_spent_hrs"]) * 60).round().astype('Int64')
+            self.cademycode_students["time_spent_mins"] = (pd.to_numeric(self.cademycode_students["time_spent_hrs"], errors='coerce') * 60).round().astype('Int64')
             self.logger.debug("Successfully converted 'time_spent_hrs' string values to integer minutes in 'time_spent_mins'")
             try:          
                 del self.cademycode_students["time_spent_hrs"]
@@ -37,29 +37,34 @@ class Transform:
                 self.logger.critical("Failed to delete old time column (time_spent_hrs):\n    %s", e)
         except Exception as e:
             self.logger.error("Failed to convert 'time_spent_hrs' string values to integer minutes in 'time_spent_mins':\n    %s", e)
-            raise e
+            raise
         
         return self
 
-    def coerce_student_data_types(self):
-        """Coerce datatypes"""
-    
+    def parse_dob(self):
+        "Transforms dob from string to datetime and batches rotten data"
         try:
-            self.cademycode_students['dob'] = pd.to_datetime(self.cademycode_students['dob'], format="%Y-%m-%d")
+            self.cademycode_students['dob'] = pd.to_datetime(self.cademycode_students['dob'], format="%Y-%m-%d", errors='coerce')
         except Exception as e:
             self.logger.error("Failed to set 'dob' datatype to datetime:\n    %s", e)
+            raise 
 
+        return self
+
+    def parse_numeric_feilds(self):
+        "Parses numeric string fields into integer dtypes"
         try:
             for col in ["job_id", "num_course_taken", "current_career_path_id"]:
-                self.cademycode_students[col] = pd.to_numeric(self.cademycode_students[col], errors="coerce")
-            self.logger.debug("Datatypes of job_id, num_course_taken, current_career_path_id columns set to integers")
+                    self.cademycode_students[col] = pd.to_numeric(self.cademycode_students[col], errors='coerce').astype('Int64')
+                    self.logger.debug(f"Datatypes of {col} column set to {self.cademycode_students[col].dtype}")
         except Exception as e:
             self.logger.error("Failed to change datatype for the columns :\n%s \n    %s", ["job_id", "num_course_taken", "current_career_path_id"], e)
+            raise
 
         return self
         
     
-    def transform_student_contact_info(self):
+    def parse_contact_info(self):
         """"Unpacks JSON-formatted 'contact_info' strings into distinct DataFrame columns.
             
             Arg:
@@ -97,12 +102,12 @@ class Transform:
             self.logger.debug("Successfully unpacked 'contact_info' dictionary keys into distinct columns")
         except Exception as e:
             self.logger.error("Failed to unpack 'contact_info' dictionary keys into distinct columns:\n    %s", e)
-            raise e
+            raise
         return self
 
 
 
-    def drop_null_n_duplicates(self):
+    def drop_null_and_duplicates(self):
         """Cleans the dataframes
         Returns:
             dict[str, Dataframe]: cleaned dataframes"""
@@ -113,7 +118,7 @@ class Transform:
             self.raw_tables[name] = dataframe.drop_duplicates()
         self.logger.debug("Dropped all duplicate rows from all dataframes")
 
-    def validate_fk_vals(self):
+    def validate_fk_values(self):
         """Ensures foreign key values are valid, if not save as Na"""
         self.logger.debug("Ensuring all foregin keys are valid")
         try:
@@ -140,7 +145,7 @@ class Transform:
                 self.logger.debug("Replaced %d invalid current_career_path_id with NA", invalid_course_ids_mask.sum())
         except Exception as e:
             self.logger.error("Failed to ensure all entries in foreign key column 'current_career_path_id' are valid:\n    %s", e)
-
+            raise
         return self
 
     def normalise_name_to_first_and_last(self):
@@ -152,9 +157,10 @@ class Transform:
 
             self.cademycode_students.insert(1, "first_name", split_names[0])
             self.cademycode_students.insert(2, "last_name", split_names[1])
-            self.logger.debug("'name' column normalise into 'fist_name' and 'last_name' columns")
+            self.logger.debug("'name' column normalise into 'first_name' and 'last_name' columns")
         except Exception as e:
             self.logger.critical("Failed to normalise 'name' column into 'first_name' and 'last_name' columns:\n%s", e)
+            raise
 
     def return_staged_tables(self):
         """Load cleans df to clean dict"""
@@ -165,18 +171,19 @@ class Transform:
             self.logger.debug("Successfully set staged_tables")
         except Exception as e:
             self.logger.critical("Failed to set staged_tables:\n    %s", e)
-            raise e
+            raise
         return self.staged_tables
 
 
-    def run_transform(self):
+    def run_transformation(self):
         self.logger.info("Transforming data...")
         self.isolate_tables()
-        self.transform_student_time_spent()
-        self.coerce_student_data_types()
-        self.transform_student_contact_info()
-        self.drop_null_n_duplicates()
-        self.validate_fk_vals()
+        self.calculate_time_spent()
+        self.parse_dob()
+        self.parse_numeric_feilds()
+        self.parse_contact_info()
+        self.drop_null_and_duplicates()
+        self.validate_fk_values()
         self.normalise_name_to_first_and_last()
         self.return_staged_tables()
         self.logger.info("Transformation complete")
@@ -208,5 +215,5 @@ if __name__ == "__main__":
             "job_name": ["a", "a", "c", "c", "d"]
         })
     }
-    processed_tables = Transform(raw_tables).run_transform()
+    processed_tables = Transform(raw_tables).run_transformation()
     print(processed_tables)
