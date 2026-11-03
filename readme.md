@@ -1,7 +1,7 @@
 # Cademycode ETL Pipeline
 
 ## Description
-A robust, Python-based Extract, Transform, Load (ETL) pipeline designed to ingest, clean, normalize, and validate raw educational data. 
+Python-based Extract, Transform, Load (ETL) pipeline designed to ingest, clean, normalize, and validate raw educational data. 
 
 **Why build this:** 
 Raw educational data is inherently messy—containing string-formatted dates, mixed numeric text, nested JSON contact info, and broken foreign key relationships. This pipeline automates the data wrangling process to transform raw data tables into clean, structured, and analysis-ready formats while implementing structured error logging and exception testing.
